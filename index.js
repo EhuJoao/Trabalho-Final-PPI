@@ -28,7 +28,7 @@ app.use(session({
 app.use(cookieParser())
 
 app.get("/", verificarAutenticacao, (requisicao, resposta) => {
-    const ultimoLogin = requisicao.cookies.ultimoLogin
+    const ultimoLogin = requisicao.cookies.ultimoacesso
 
     resposta.send(`
         <!DOCTYPE html>
@@ -178,7 +178,7 @@ app.get("/", verificarAutenticacao, (requisicao, resposta) => {
 
 
 app.get("/cadastrartime",verificarAutenticacao, (requisicao, resposta)=>{
-    const ultimoLogin = requisicao.cookies.ultimoLogin
+    const ultimoLogin = requisicao.cookies.ultimoacesso
     resposta.send(`
          <!DOCTYPE html>
 <html lang="pt-br">
@@ -353,7 +353,7 @@ app.get("/cadastrartime",verificarAutenticacao, (requisicao, resposta)=>{
 })
 
 app.post("/cadastrartime", (requisicao, resposta) =>{
-    const ultimoLogin = requisicao.cookies.ultimoLogin
+    const ultimoLogin = requisicao.cookies.ultimoacesso
     const equipe = requisicao.body.equipe;
     const tecnico = requisicao.body.tecnico;
     const telefone = requisicao.body.telefone;
@@ -563,7 +563,7 @@ app.post("/cadastrartime", (requisicao, resposta) =>{
 });
 
 app.get("/timescadastrados",verificarAutenticacao, (requisicao, resposta) =>{
-        const ultimoLogin = requisicao.cookies.ultimoLogin
+        const ultimoLogin = requisicao.cookies.ultimoacesso
     let conteudo = `<!DOCTYPE html>
 <html lang="pt-br">
 
@@ -671,7 +671,7 @@ app.get("/timescadastrados",verificarAutenticacao, (requisicao, resposta) =>{
 })
 
 app.get("/cadastrarjogador", verificarAutenticacao, (req, resposta) => {
-    const ultimoLogin = req.cookies.ultimoLogin;
+    const ultimoLogin = requisicao.cookies.ultimoacesso
 
     let conteudo = `
     <!DOCTYPE html>
@@ -861,7 +861,7 @@ app.get("/cadastrarjogador", verificarAutenticacao, (req, resposta) => {
 });
 
 app.post("/cadastrarjogador", (requisicao, resposta) =>{
-    const ultimoLogin = requisicao.cookies.ultimoLogin
+    const ultimoLogin = requisicao.cookies.ultimoacesso
     const jogador = requisicao.body.jogador;
     const numero = requisicao.body.numero;
     const data = requisicao.body.data;
@@ -1151,7 +1151,7 @@ if (!equipe) {
 });
 
 app.get("/jogadorescadastrados", verificarAutenticacao, (requisicao, resposta) =>{
-    const ultimoLogin = requisicao.cookies.ultimoLogin
+    const ultimoLogin = requisicao.cookies.ultimoacesso
     let conteudo = `
     
     <!DOCTYPE html>
@@ -1235,22 +1235,39 @@ app.get("/jogadorescadastrados", verificarAutenticacao, (requisicao, resposta) =
                         <td colspan="7" class="fst-italic text-secondary">Nenhum jogador cadastrado no momento.</td>
                     </tr>`
                 }
-                else{
-                    for(let i=0;i<listaJogadores.length;i++){
-                        const partes = listaJogadores[i].data.split("-");
-                        const dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
-                        conteudo +=`
+                else {
+    // 1. Agrupar jogadores por equipe
+    const jogadoresPorEquipe = {};
+    for (let jogador of listaJogadores) {
+        if (!jogadoresPorEquipe[jogador.equipe]) {
+            jogadoresPorEquipe[jogador.equipe] = [];
+        }
+        jogadoresPorEquipe[jogador.equipe].push(jogador);
+    }
+
+                    for (let equipe in jogadoresPorEquipe) {
+                        conteudo += `
+                        <tr>
+                           <td colspan="7" class="table-secondary fw-bold text-center">Time: ${equipe}</td>
+                        </tr>`;
+                    
+                        for (let jogador of jogadoresPorEquipe[equipe]) {
+                            const partes = jogador.data.split("-");
+                            const dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
+                        
+                            conteudo += `
                             <tr>
-                            <td>${listaJogadores[i].jogador}</td>
-                            <td>${listaJogadores[i].numero}</td>
-                            <td>${dataFormatada}</td>
-                            <td>${listaJogadores[i].altura}</td>
-                            <td>${listaJogadores[i].genero}</td>
-                            <td>${listaJogadores[i].posicao}</td>
-                            <td>${listaJogadores[i].equipe}</td>
-                            </tr>
-                        `
-                    }}
+                                <td>${jogador.jogador}</td>
+                                <td>${jogador.numero}</td>
+                                <td>${dataFormatada}</td>
+                                <td>${jogador.altura}</td>
+                                <td>${jogador.genero}</td>
+                                <td>${jogador.posicao}</td>
+                                <td>${jogador.equipe}</td>
+                            </tr>`;
+                        }
+                    }
+                }
 
                     conteudo += `
                 </tbody>
@@ -1266,10 +1283,6 @@ app.get("/jogadorescadastrados", verificarAutenticacao, (requisicao, resposta) =
 resposta.send(conteudo);
 resposta.end()
 })
-
-
-
-
 
 app.get("/login", (requisicao, resposta) => {
     resposta.send(`
@@ -1550,5 +1563,5 @@ app.get("/logout", (requisicao,resposta) =>{
 })
 
 app.listen(port, host, ()=>{
-    console.log(`Servidor rodando em http://${host}:${port}/`)
+    console.log(`Servidor rodando em http://${host}:${port}/`)  
 })
