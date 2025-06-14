@@ -540,7 +540,7 @@ app.post("/cadastrartime", (requisicao, resposta) =>{
         }
         if (!telefone) {
             conteudo += `<label for="telefone">Telefone do técnico responsável</label>
-                <input type="number" id="telefone" name="telefone" style="border: 1px solid #ff0000;" required>`
+                <input type="number" id="telefone" name="telefone" style="border: 1px solid #ff0000;" required placeholder="Por favor, informe o numero do técnico">`
         } else {
             conteudo += `<label for="telefone">Telefone do técnico responsável</label>
         <input type="number" id="telefone" name="telefone" value=${telefone}required>`;
