@@ -1,0 +1,5 @@
+Vercel: https://trabalho-final-ppi-alpha.vercel.app/login
+Github: https://github.com/EhuJoao/Trabalho-Final-PPI
+
+Professor na Vercel o projeto não está upando a logo, e também não está ordenando a data da maneira certa, porém
+localmente ao iniciar funciona perfeitamente

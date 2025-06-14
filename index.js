@@ -670,7 +670,7 @@ app.get("/timescadastrados",verificarAutenticacao, (requisicao, resposta) =>{
     resposta.end()
 })
 
-app.get("/cadastrarjogador", verificarAutenticacao, (req, resposta) => {
+app.get("/cadastrarjogador", verificarAutenticacao, (requisicao, resposta) => {
     const ultimoLogin = requisicao.cookies.ultimoacesso
 
     let conteudo = `
